@@ -1,4 +1,8 @@
-extends layout
-
-block content
-  #game
+!!!
+html
+  head
+    title= title
+    != css('style')
+  body
+    #game
+    != js('app')
