@@ -1,0 +1,12 @@
+# Ignore npm files #
+####################
+node_modules
+npm-debug.log
+
+# connect-assets build #
+########################
+builtAssets
+
+# OS generated files #
+######################
+.DS_Store*
