@@ -1,4 +1,3 @@
-#= require lib/hogan-2.0.0.min.js
 #= require lib/jquery-1.7.1.min.js
 #= require lib/underscore-min.js
 #= require lib/backbone-min.js
@@ -50,10 +49,11 @@ class HandView extends Backbone.View
   initialize: ->
 
   render: =>
-    for card in @collection.models
+    for card, idx in @collection.models
       suit = suits[card.get('suit')]
       view = new CardView
         model: card
+        index: idx
         className: "card #{suit}"
       @$el.append view.render().el
     @

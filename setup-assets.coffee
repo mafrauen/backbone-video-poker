@@ -1,6 +1,10 @@
 path = require 'path'
+fs = require 'fs'
 hogan = require 'hogan.js'
 assets = require 'connect-assets'
+
+fs.exists = fs.exists or path.exists
+fs.existsSync = fs.existsSync or path.existsSync
 
 assets.jsCompilers.mustache =
   namespace: 'Templates'
