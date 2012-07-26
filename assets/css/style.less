@@ -13,27 +13,28 @@ a {
   text-align: center;
   margin-left: 15px;
   padding-top: 60px;
-  padding-bottom: 40px;
+  padding-bottom: 45px;
   border-radius: 15px;
 
-  &.Diamonds {
+  &.D{
     color: black;
     background: #A00;
   }
-  &.Hearts {
+  &.H {
     color: black;
     background: red;
   }
-  &.Spades {
+  &.S{
     color: white;
     background: black;
   }
-  &.Clubs {
+  &.C{
     color: white;
     background: #666;
   }
 
   .hold {
+    visibility: hidden;
     position: relative;
     top: 30px;
     left: 18px;
@@ -44,6 +45,9 @@ a {
 
     .text {
       margin-left: 40px;
+    }
+    &.isHeld {
+      visibility: initial;
     }
   }
 }
