@@ -46,6 +46,9 @@ class HandView extends Backbone.View
 
   id: 'hand'
 
+  events:
+    'click .card'
+
   initialize: ->
 
   render: =>
@@ -58,6 +61,7 @@ class HandView extends Backbone.View
       @$el.append view.render().el
     @
 
+
 class CardView extends Backbone.View
 
   template: new Hogan.Template Templates.card
@@ -67,11 +71,6 @@ class CardView extends Backbone.View
       name: names[@model.get('name')]
       suit: suits[@model.get('suit')]
     @
-
-
-class GameView extends Backbone.View
-
-  initialize: ->
 
 
 jQuery ->
