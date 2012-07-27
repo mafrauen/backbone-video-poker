@@ -1,6 +1,7 @@
 body {
-  padding: 50px;
+  padding: 30px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  width: 960px;
 }
 
 a {
@@ -9,12 +10,16 @@ a {
 
 .card {
   display: inline-block;
-  width: 200px;
+  width: 180px;
   text-align: center;
-  margin-left: 15px;
-  padding-top: 60px;
+  margin-left: 10px;
+  padding-top: 50px;
   padding-bottom: 45px;
   border-radius: 15px;
+
+  &:last {
+    margin-right: 10px;
+  }
 
   &.D{
     color: black;
@@ -36,12 +41,14 @@ a {
   .hold {
     visibility: hidden;
     position: relative;
-    top: 30px;
+    top: 32px;
     left: 18px;
     background: white;
     color: black;
     font-size: 24px;
     -webkit-transform: rotate(-27deg);
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
 
     .text {
       margin-left: 40px;

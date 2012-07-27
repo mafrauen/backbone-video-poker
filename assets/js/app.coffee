@@ -52,6 +52,7 @@ class HandView extends Backbone.View
 
   initialize: ->
     @collection.on 'reset', @render
+    $('body').keypress @handleKey
 
   render: =>
     @$el.empty()
@@ -62,7 +63,7 @@ class HandView extends Backbone.View
         index: idx
         className: "card #{suit}"
       @$el.append view.render().el
-    @$el.append '
+    @$el.append '<br>
       <button id="draw">Draw</button>
       '
     @
@@ -70,12 +71,25 @@ class HandView extends Backbone.View
   draw: =>
     @collection.deal deck
 
+  handleKey: (e) =>
+    console.log e.keyCode
+    if e.keyCode is 32
+      #TODO but then need to deal...
+      @draw()
+    if e.keyCode in [49..53]
+      index = e.keyCode - 49
+      card = @collection.at(e.keyCode - 49)
+      card.trigger 'hold'
+
 class CardView extends Backbone.View
 
   template: new Hogan.Template Templates.card
 
   events:
     'click': 'hold'
+
+  initialize: (model) =>
+    @model.on 'hold', @hold
 
   render: =>
     @$el.html @template.render
