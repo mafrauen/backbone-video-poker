@@ -8,6 +8,19 @@ a {
   color: #00B7FF;
 }
 
+#instructions {
+  text-align: center;
+}
+
+#hand {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+
+#credits {
+  margin-left: 600px;
+}
+
 .card {
   display: inline-block;
   width: 180px;
@@ -56,5 +69,36 @@ a {
     &.isHeld {
       visibility: initial;
     }
+  }
+}
+
+.table {
+  display: inline;
+}
+
+#payTable {
+  .payHand {
+    &.highlightHand {
+      background: lightBlue;
+    }
+
+    .highlightBet {
+      background: lightgreen;
+    }
+
+
+    .bet1,
+    .bet2,
+    .bet3,
+    .bet4,
+    .bet5 {
+      position: absolute;
+    }
+
+    .bet1 { left: 400px; }
+    .bet2 { left: 450px; }
+    .bet3 { left: 500px; }
+    .bet4 { left: 550px; }
+    .bet5 { left: 600px; }
   }
 }

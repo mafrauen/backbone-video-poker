@@ -25,30 +25,33 @@ suits =
   D: 'Diamonds'
   S: 'Spades'
 
-deck = new Deck
+game = new Game
 
 class AppView extends Backbone.View
 
-  el: $('#game')
-
-  initialize: ->
+  initialize: =>
+    game.on 'change:bet', @highlightBet
     @render()
+    @highlightBet()
 
   render: =>
-    # paytable, game, hand, buttons
-    deck.shuffle()
-    hand = deck.draw 5
-    view = new HandView(collection: hand)
-    @$el.append view.render().el
+    payTableView = new PayTableView(model: game.payTable)
+    $('#payTable').append payTableView.render().el
+    gameView = new GameView model: game
+    $('#game').append gameView.render().el
     @
 
+  highlightBet: (bet)  =>
+    bet = game.get 'bet'
+    $(".bet1").toggleClass 'highlightBet', bet is 1
+    $(".bet2").toggleClass 'highlightBet', bet is 2
+    $(".bet3").toggleClass 'highlightBet', bet is 3
+    $(".bet4").toggleClass 'highlightBet', bet is 4
+    $(".bet5").toggleClass 'highlightBet', bet is 5
 
 class HandView extends Backbone.View
 
   id: 'hand'
-
-  events:
-    'click #draw': 'draw'
 
   initialize: ->
     @collection.on 'reset', @render
@@ -63,19 +66,9 @@ class HandView extends Backbone.View
         index: idx
         className: "card #{suit}"
       @$el.append view.render().el
-    @$el.append '<br>
-      <button id="draw">Draw</button>
-      '
     @
 
-  draw: =>
-    @collection.deal deck
-
   handleKey: (e) =>
-    console.log e.keyCode
-    if e.keyCode is 32
-      #TODO but then need to deal...
-      @draw()
     if e.keyCode in [49..53]
       index = e.keyCode - 49
       card = @collection.at(e.keyCode - 49)
@@ -95,6 +88,11 @@ class CardView extends Backbone.View
     @$el.html @template.render
       name: names[@model.get('name')]
       suit: suits[@model.get('suit')]
+
+    hand = @model.collection
+    index = hand.models.indexOf @model
+    isHeld = index in hand.held
+    @$el.fadeIn 150 * index unless isHeld
     @renderHeld()
     @
 
@@ -113,5 +111,76 @@ class CardView extends Backbone.View
     @renderHeld()
 
 
+class GameView extends Backbone.View
+
+  template: new Hogan.Template Templates.game
+
+  events:
+    'click #lessBet': 'lessBet'
+    'click #moreBet': 'moreBet'
+
+  initialize: =>
+    @model.on 'deal', @renderHand
+    @model.on 'change', @render
+    $('body').keypress @handleKey
+
+  render: =>
+    @$el.html @template.render
+      bet: @model.get 'bet'
+      credits: @model.get 'credit'
+    @
+
+  renderHand: (hand) =>
+    handView = new HandView(collection: hand)
+    $('#hand').html handView.render().el
+    $('#instructions').html '<br>'
+
+  handleSpace: =>
+    if @hand
+      @model.draw()
+      $('#instructions').html 'Press Space to deal again'
+      @$('#moreBet, #lessBet').removeAttr 'disabled'
+      @hand = undefined
+    else
+      @hand = @model.deal()
+      @$('#moreBet, #lessBet').attr 'disabled', 'disabled'
+
+  lessBet: =>
+    bet = @model.get 'bet'
+    @model.set 'bet', --bet
+
+  moreBet: =>
+    bet = @model.get 'bet'
+    @model.set 'bet', ++bet
+
+  handleKey: (e) =>
+    @handleSpace() if e.keyCode is 32
+
+
+class PayTableView extends Backbone.View
+
+  template: new Hogan.Template Templates.payTable
+
+  initialize: =>
+    @model.on 'change', @changes
+
+    @info = hands: []
+    for key, value of @model.getPayouts()
+      hand = name: key
+      for bet in [1..5]
+        win = bet * value
+        if key is 'royalFlush' and bet is 5
+          win *= @model.multiplier
+        hand["bet#{bet}"] = win
+      @info.hands.push hand
+
+  render: =>
+    @$el.html @template.render @info
+    @
+
+  changes: (changes) =>
+    for key,value of changes.changedAttributes()
+      @$("##{key}").toggleClass 'highlightHand', value > 0
+
 jQuery ->
-  new AppView
+  window.app = new AppView

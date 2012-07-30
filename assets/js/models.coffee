@@ -142,10 +142,10 @@ class Game extends Backbone.Model
     bet: 1
     numHands: 1
 
-  payTable = {}
+  payTable: {}
 
   initialize: =>
-    payTable = new JacksBetter96
+    @payTable = new JacksBetter96
 
   validate: (attr) ->
     if attr.bet < 1 or attr.bet > 5
@@ -157,7 +157,7 @@ class Game extends Backbone.Model
         return 'cannot change number of hands during a hand'
 
   deal: =>
-    payTable.clearWins()
+    @payTable.clearWins()
     return @hand if @hand
     num = @get 'numHands'
     bet = @get 'bet'
@@ -168,32 +168,36 @@ class Game extends Backbone.Model
     @decks = []
     deck = new Deck
     @hand = deck.draw 5
-    payTable.check @hand
+    @payTable.check @hand
 
     @decks.push deck
     for i in [1...num]
       @decks.push new Deck(deck.models)
 
+    @trigger 'deal', @hand
     @hand
 
   draw: =>
+    @payTable.clearWins()
     hands = []
     for deck in @decks
       hands.push @hand.deal(deck)
 
-    getMultipier = (type) ->
+    getMultipier = (type) =>
       if type is 'royalFlush' and bet is 5
-        return payTable.multiplier
+        return @payTable.multiplier
       return 1
 
     bet = @get 'bet'
     credit = @get 'credit'
     for hand in hands
-      payTable.check hand, (win, type) ->
+      @payTable.check hand, (win, type) ->
         credit += bet * win * getMultipier(type)
 
     @set credit: credit
     @hand = undefined
+
+    @trigger 'draw', hands
     hands
 
 
@@ -207,7 +211,6 @@ class PayTable extends Backbone.Model
     @set type, 1 + curr
 
 class JacksBetter96 extends PayTable
-
   defaults:
     pair: 0
     twoPair: 0
@@ -228,7 +231,7 @@ class JacksBetter96 extends PayTable
     fullHouse: 9
     fourOfAKind: 25
     straightFlush: 50
-    royalFlush: 800
+    royalFlush: 250
 
   multiplier: 3.2
 

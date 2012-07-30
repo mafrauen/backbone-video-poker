@@ -396,6 +396,25 @@ describe 'Game', ->
     done()
 
   it 'should give correct credits for a royal flush', (done) ->
+    game.set 'bet', 2
+    fake = makeHand
+      names: ['A', 'T', 'K', 'J', 'Q']
+      suits: ['D', 'D', 'D', 'D', 'D']
+
+    hand = game.deal()
+    hand.reset fake.models
+    hand.hold 0
+    hand.hold 1
+    hand.hold 2
+    hand.hold 3
+    hand.hold 4
+
+    game.draw()
+    game.get('credit').should.eql 998+500
+
+    done()
+
+  it 'should give correct credits for a royal flush', (done) ->
     game.set 'bet', 5
     fake = makeHand
       names: ['A', 'T', 'K', 'J', 'Q']
